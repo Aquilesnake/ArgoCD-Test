@@ -1,0 +1,12 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Connect to ArgoCD') {
+            steps {
+                sh 'argocd login argocd.ist-CC1.nnn.k8s.bbb --sso'
+                sh 'argocd app list --grpc-web -o wide'
+            }
+        }
+    }
+}

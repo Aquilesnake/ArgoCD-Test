@@ -1,31 +1,35 @@
 pipeline {
-    agent any
+    agent any
 
-    stages {
-        stage('Conectar a ArgoCD') {
-            steps {
-                script {
-                    def argoCDURL = 'http://localhost:8080'
-                    def username = 'tu_usuario'
-                    def password = 'tu_contraseña'
+    stages {
+        stage('Conectar a ArgoCD') {
+            steps {
+                script {
+                    // URL de la demo pública de ArgoCD
+                    def argoCDURL = 'https://cd.apps.argoproj.io'
+                    // Las credenciales predeterminadas de la demo pública
+                    def username = 'admin'
+                    def password = 'password'
 
-                    // Utilizando cmd /C
-                    sh """
-                    cmd /C "curl -X GET -u ${username}:${password} ${argoCDURL}/api/v1/health > respuesta.txt 2>&1"
-                    """
-                }
-            }
-        }
-    }
+                    // Ejecutando la petición HTTP para verificar la conexión
+                    sh """
+                    curl -X GET -u ${username}:${password} ${argoCDURL}/api/v1/health > respuesta.txt 2>&1
+                    """
+                }
+            }
+        }
+    }
 
-    post {
-        success {
-            // Acciones al éxito
-            echo "Conexión a ArgoCD exitosa"
-        }
-        failure {
-            // Acciones al fallo
-            echo "Error al conectar a ArgoCD"
-        }
-    }
+    post {
+        success {
+            // Acciones al éxito
+            echo "Conexión a ArgoCD exitosa"
+            sh 'cat respuesta.txt'
+        }
+        failure {
+            // Acciones al fallo
+            echo "Error al conectar a ArgoCD"
+            sh 'cat respuesta.txt'
+        }
+    }
 }

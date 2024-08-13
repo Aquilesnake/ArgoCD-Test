@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     stages {
-        stage('Conectar a ArgoCD y listar aplicaciones') {
+        stage('Listar aplicaciones de ArgoCD') {
             steps {
                 script {
                     // URL de la demo pública de ArgoCD
@@ -10,15 +10,13 @@ pipeline {
                     def username = 'admin'
                     def password = 'password'
 
-                    // Primero, verificar la conexión a ArgoCD
+                    // Listar las aplicaciones y guardar la respuesta en un archivo
                     bat """
-                    curl -X GET -u ${username}:${password} ${argoCDURL}/api/v1/health
+                    curl -X GET -u ${username}:${password} ${argoCDURL}/api/v1/applications > aplicaciones.txt
                     """
 
-                    // Luego, listar las aplicaciones usando la API de ArgoCD
-                    bat """
-                    curl -X GET -u ${username}:${password} ${argoCDURL}/api/v1/applications
-                    """
+                    // Mostrar el contenido del archivo de aplicaciones en la consola
+                    bat 'type aplicaciones.txt'
                 }
             }
         }
@@ -26,11 +24,10 @@ pipeline {
 
     post {
         success {
-            echo "Operación exitosa"
+            echo "Aplicaciones listadas exitosamente y guardadas en aplicaciones.txt"
         }
         failure {
-            echo "Error en la operación"
+            echo "Error al listar las aplicaciones"
         }
     }
 }
-

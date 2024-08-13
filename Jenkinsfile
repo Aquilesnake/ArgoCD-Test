@@ -1,5 +1,5 @@
 pipeline {
-  agent any
+ agent any
 
  stages {
   stage('Conectar a ArgoCD') {
@@ -13,8 +13,10 @@ pipeline {
 
      // Ejecutando la petición HTTP para verificar la conexión
      sh """
-     curl -X GET -u ${username}:${password} ${argoCDURL}/api/v1/health > respuesta.txt 2>&1
+     curl -X GET -u ${username}:${password} ${argoCDURL}/api/v1/health
      """
+     // Nota: Si la conexión es exitosa, curl devolverá el contenido del endpoint.
+     // No estamos redirigiendo la salida a un archivo para simplificar.
     }
    }
   }
@@ -24,12 +26,14 @@ pipeline {
   success {
    // Acciones al éxito
    echo "Conexión a ArgoCD exitosa"
-   sh 'cat respuesta.txt'
+   // Comentamos la siguiente línea porque no estamos generando 'respuesta.txt'
+   // sh 'cat respuesta.txt'
   }
   failure {
    // Acciones al fallo
    echo "Error al conectar a ArgoCD"
-   sh 'cat respuesta.txt'
+   // Comentamos la siguiente línea porque no estamos generando 'respuesta.txt'
+   // sh 'cat respuesta.txt'
   }
  }
 }

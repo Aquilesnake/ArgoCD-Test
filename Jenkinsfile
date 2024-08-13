@@ -2,11 +2,30 @@ pipeline {
     agent any
 
     stages {
-        stage('Connect to ArgoCD') {
+        stage('Conectar a ArgoCD') {
             steps {
-                sh 'argocd login 192.168.1.100:8090 --sso'
-                sh 'argocd app list --grpc-web -o wide'
+                script {
+                    def argoCDURL = 'http://localhost:8080'
+                    def username = 'tu_usuario'
+                    def password = 'tu_contraseña'
+
+                    // Utilizando cmd /C
+                    sh """
+                    cmd /C "curl -X GET -u ${username}:${password} ${argoCDURL}/api/v1/health > respuesta.txt 2>&1"
+                    """
+                }
             }
+        }
+    }
+
+    post {
+        success {
+            // Acciones al éxito
+            echo "Conexión a ArgoCD exitosa"
+        }
+        failure {
+            // Acciones al fallo
+            echo "Error al conectar a ArgoCD"
         }
     }
 }

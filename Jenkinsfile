@@ -2,18 +2,22 @@ pipeline {
     agent any
 
     stages {
-        stage('Conectar a ArgoCD') {
+        stage('Conectar a ArgoCD y listar aplicaciones') {
             steps {
                 script {
                     // URL de la demo pública de ArgoCD
                     def argoCDURL = 'https://cd.apps.argoproj.io'
-                    // Las credenciales predeterminadas de la demo pública
                     def username = 'admin'
                     def password = 'password'
 
-                    // Ejecutando la petición HTTP para verificar la conexión usando bat
+                    // Primero, verificar la conexión a ArgoCD
                     bat """
                     curl -X GET -u ${username}:${password} ${argoCDURL}/api/v1/health
+                    """
+
+                    // Luego, listar las aplicaciones usando la CLI de ArgoCD
+                    bat """
+                    argocd app list --grpc-web -o wide --server ${argoCDURL} --username ${username} --password ${password}
                     """
                 }
             }
@@ -22,12 +26,11 @@ pipeline {
 
     post {
         success {
-            // Acciones al éxito
-            echo "Conexión a ArgoCD exitosa"
+            echo "Operación exitosa"
         }
         failure {
-            // Acciones al fallo
-            echo "Error al conectar a ArgoCD"
+            echo "Error en la operación"
         }
     }
 }
+

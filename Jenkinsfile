@@ -15,9 +15,9 @@ pipeline {
                     curl -X GET -u ${username}:${password} ${argoCDURL}/api/v1/health
                     """
 
-                    // Luego, listar las aplicaciones usando la CLI de ArgoCD
+                    // Luego, listar las aplicaciones usando la API de ArgoCD
                     bat """
-                    argocd app list --grpc-web -o wide --server ${argoCDURL} --username ${username} --password ${password}
+                    curl -X GET -u ${username}:${password} ${argoCDURL}/api/v1/applications
                     """
                 }
             }

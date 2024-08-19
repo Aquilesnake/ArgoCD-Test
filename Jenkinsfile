@@ -24,7 +24,7 @@ pipeline {
                     servers.each { server ->
                         bat """
                         curl -X GET -u ${username}:${password} ${server.url}/api/v1/applications > ${server.filename}
-                        copy ${server.filename} /ruta/a/tu/carpeta/compartida/${server.filename}
+                        copy ${server.filename} C:\\repositior\\${server.filename}
                         """
 
                     }

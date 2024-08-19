@@ -2,21 +2,25 @@ pipeline {
     agent any
 
     stages {
-        stage('Listar aplicaciones de ArgoCD') {
+        stage('Listar aplicaciones de ArgoCD en servidores') {
             steps {
                 script {
-                    // URL de la demo pública de ArgoCD
-                    def argoCDURL = 'https://cd.apps.argoproj.io'
+                    // Parámetros de conexión (puedes cambiar las URLs después)
+                    def servers = [
+                        [url: 'https://cd.apps.argoproj.io', filename: 'aplicaciones_pa5.txt'],
+                        [url: 'https://cd.apps.argoproj.io', filename: 'aplicaciones_ia9.txt'],
+                        [url: 'https://cd.apps.argoproj.io', filename: 'aplicaciones_ia4.txt']
+                    ]
                     def username = 'admin'
                     def password = 'password'
 
-                    // Listar las aplicaciones y guardar la respuesta en un archivo
-                    bat """
-                    curl -X GET -u ${username}:${password} ${argoCDURL}/api/v1/applications > aplicaciones.txt
-                    """
-
-                    // Mostrar el contenido del archivo de aplicaciones en la consola
-                    bat 'type aplicaciones.txt'
+                    // Iterar sobre cada servidor y realizar la operación
+                    servers.each { server ->
+                        sh """
+                        curl -X GET -u ${username}:${password} ${server.url}/api/v1/applications > ${server.filename}
+                        cp ${server.filename} /ruta/a/tu/carpeta/compartida/${server.filename}
+                        """
+                    }
                 }
             }
         }
@@ -24,10 +28,10 @@ pipeline {
 
     post {
         success {
-            echo "Aplicaciones listadas exitosamente y guardadas en aplicaciones.txt"
+            echo "Aplicaciones listadas y guardadas en la carpeta compartida en la red para todos los servidores"
         }
         failure {
-            echo "Error al listar las aplicaciones"
+            echo "Error al listar las aplicaciones o copiar los archivos"
         }
     }
 }

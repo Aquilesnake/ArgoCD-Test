@@ -15,8 +15,8 @@ pipeline {
                     def password = 'password'
 
                     // Iterar sobre cada servidor y realizar la operación
-                   servers.each { server ->
-                      /*    sh """
+                    /*servers.each { server ->
+                         sh """
                         curl -X GET -u ${username}:${password} ${server.url}/api/v1/applications > ${server.filename}
                         cp ${server.filename} /ruta/a/tu/carpeta/compartida/${server.filename}
                         """
